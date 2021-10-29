@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: zhdh1
@@ -8,6 +9,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
 <head>
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/resources/css/form.css"/>
+    <!--  -->
 
     <!-- Jquery&Bootstrap -->
     <script src="/resources/js/jquery/jquery-3.2.1.min.js"></script>
@@ -20,72 +24,48 @@
     <script src="/resources/summernote/lang/summernote-ko-KR.js"></script>
     <link rel="stylesheet" href="/resources/summernote/summernote-lite.css">
     <!--  -->
-    <title>Title</title>
+
+    <!-- JavaScript -->
+    <script type="text/javascript" src="/resources/js/form.js"></script>
+    <!-- -->
+    <title>Summernote</title>
 </head>
 <body>
+<!-- header 영역 -->
 <header>
-<div style="width: 1200px; margin: 0 auto 10px; border-bottom: 1px solid #6c757d;" class="header-container">
+<div class="header-container">
     <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="#">게시판 등록</a>
     </nav>
 </div>
 </header>
-<div style="width: 1100px; margin: 0 auto;" class="notice-container">
+<!-- 컨텐츠 영역 -->
+<div class="notice-container">
+    <!-- 게시글 고유식별자 -->
+    <input id="idx" type="hidden" value="${param.idx}">
+    <!-- form title 영역 -->
     <div class="form-group">
         <label for="notice_title">제목</label>
         <input type="title" class="form-control" id="notice_title" placeholder="Enter title">
     </div>
+    <!-- form content 영역 -->
     <div>
         <label for="notice_content">내용</label>
         <textarea id="notice_content" class="summernote"></textarea>
     </div>
-    <div style="margin-top: 5px;" class="text-right">
-        <button style="padding: 10px 40px;" class="pull-right btn btn-secondary" onClick="moveForm();">취소</button>
-        <button style="padding: 10px 40px;" class="btn btn-primary" onClick="insertNotice();">등록</button>
+    <!-- form button 영역 -->
+    <div id="form-btn-area" class="text-right">
+        <c:choose>
+            <c:when test="${param.idx != null}">
+                <button class="pull-right btn btn-secondary" onClick="moveView();">취소</button>
+                <button class="btn btn-primary" onClick="updateNotice();">수정</button>
+            </c:when>
+            <c:otherwise>
+                <button class="pull-right btn btn-secondary" onClick="moveNotice();">취소</button>
+                <button class="btn btn-primary" onClick="insertNotice();">등록</button>
+            </c:otherwise>
+        </c:choose>
     </div>
 </div>
-<script>
-    $('.summernote').summernote({
-        width: 1100,
-        height: 800,
-        lang: "ko-KR",
-        placeholder: 'Enter Contents',
-        toolbar: [
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-            ['color', ['forecolor','color']],
-            ['table', ['table']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert',['picture','link','video']]
-        ],
-        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
-        fontSizes: ['8','9','10','11','12','13','14','16','18','20','24','30','36']
-    });
-
-    const insertNotice = function() {
-        let param = {
-            title: $('#notice_title').val(),
-            content: $('.note-editable').html()
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/form/insert.do",
-            data: param,
-            success: function(res) {
-                location.replace("/");
-            },
-            error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
-                alert("통신 실패");
-            }
-        });
-    };
-
-    const moveForm = function() {
-        location.href = "/";
-    };
-</script>
 </body>
 </html>

@@ -7,7 +7,35 @@ import java.util.List;
 
 @Mapper
 public interface NoticeMapper {
+    /**
+     * FUNCTION :: 게시글 등록 기능
+     * @param noticeDTO
+     */
     void insertNotice(NoticeDTO noticeDTO);
-    List<NoticeDTO> selectNotice(NoticeDTO noticeDTO);
-    NoticeDTO selectNoticeView(NoticeDTO noticeDTO);
+
+    /**
+     * FUNCTION :: 게시글 수정 기능
+     * @param noticeDTO
+     */
+    void updateNotice(NoticeDTO noticeDTO);
+
+    /**
+     * FUNTION :: 게시글 전체 목록 불러오기 기능
+     * @param noticeDTO
+     * @return
+     */
+    List<NoticeDTO> selectAllNotice(NoticeDTO noticeDTO);
+
+    /**
+     * FUNCTION :: 게시글 상세 조회 기능
+     * @param noticeDTO
+     * @return
+     */
+    NoticeDTO selectNotice(NoticeDTO noticeDTO);
+
+    /**
+     * FUNCTION :: 게시글 삭제 기능
+     * @param noticeDTO
+     */
+    void deleteNotice(NoticeDTO noticeDTO);
 }

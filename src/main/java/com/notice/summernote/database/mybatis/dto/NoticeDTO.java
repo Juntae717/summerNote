@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class NoticeDTO {
-    private String idx;
-    private String title;
-    private String content;
+    private int idx; // 게시글 고유식별자
+    private String title; // 게시글 제목
+    private String content; // 게시글 내용
 }

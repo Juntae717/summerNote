@@ -1,15 +1,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.notice.summernote.database.mybatis.mapper.NoticeMapper">
-    <select id="selectNotice" parameterType="NoticeDTO" resultType="NoticeDTO">
+    <!-- FUNCTION :: 게시글 목록 전체 불러오기 -->
+    <select id="selectAllNotice" parameterType="NoticeDTO" resultType="NoticeDTO">
         SELECT * FROM notice;
     </select>
 
+    <!-- FUNCTION :: 게시글 등록 -->
     <insert id="insertNotice" parameterType="NoticeDTO">
         INSERT INTO notice(title, content) VALUES(#{title}, #{content});
     </insert>
 
-    <select id="selectNoticeView" parameterType="NoticeDTO" resultType="NoticeDTO">
+    <!-- FUNCTION :: 게시글 수정 -->
+    <update id="updateNotice" parameterType="NoticeDTO">
+        UPDATE notice SET title = #{title}, content = #{content} WHERE idx = #{idx};
+    </update>
+
+    <!-- FUNCTION :: 게시글 상세 조회 -->
+    <select id="selectNotice" parameterType="NoticeDTO" resultType="NoticeDTO">
         SELECT * FROM notice WHERE idx = #{idx};
     </select>
+
+    <!-- FUNCTION :: 게시글 삭제 -->
+    <delete id="deleteNotice" parameterType="NoticeDTO">
+        DELETE FROM notice WHERE idx = #{idx};
+    </delete>
 </mapper>

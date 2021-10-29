@@ -12,24 +12,35 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
+    <!-- Css -->
+    <link rel="stylesheet" type="text/css" href="/resources/css/view.css"/>
+    <!--  -->
+
     <!-- Jquery&Bootstrap -->
     <script src="/resources/js/jquery/jquery-3.2.1.min.js"></script>
     <script src="/resources/js/jquery-ui-1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <!--  -->
 
-    <title>Title</title>
+    <!-- JavaScript -->
+    <script type="text/javascript" src="/resources/js/view.js"></script>
+    <!--  -->
+    <title>Summernote</title>
 </head>
 <body>
+<!-- header 영역 -->
 <header>
-    <div style="width: 1200px; margin: 0 auto 10px; border-bottom: 1px solid #6c757d;" class="header-container">
+    <div class="header-container">
         <nav class="navbar navbar-expand-lg navbar-light">
             <a class="navbar-brand" href="#">게시판 조회</a>
         </nav>
     </div>
 </header>
-<div style="width: 1100px; margin: 0 auto;" class="notice-container">
-    <input id="idx" type="hidden" value="<%= request.getParameter("idx")%>>">
+<!-- content 영역 -->
+<div class="notice-container">
+    <!-- 게시글 고유식별자 -->
+    <input id="idx" type="hidden" value="${param.idx}">
+    <!-- 게시글 상세 조회 영역 -->
     <ul class="list-group">
         <li class="list-group-item">
             <span id="notice_title"></span>
@@ -40,36 +51,12 @@
             </div>
         </li>
     </ul>
-    <div style="margin-top: 5px;" class="text-right">
-        <button style="padding: 10px 40px;" class="btn btn-secondary" onClick="moveForm();">뒤로가기</button>
-        <button style="padding: 10px 40px;" class="btn btn-danger" onClick="">삭제</button>
-        <button style="padding: 10px 40px;" class="btn btn-primary" onClick="">수정</button>
+    <!-- 버튼 영역 -->
+    <div id="btn-area" class="text-right">
+        <button class="btn btn-secondary" onClick="moveNotice();">뒤로가기</button>
+        <button class="btn btn-danger" onClick="deleteNotice();">삭제</button>
+        <button class="btn btn-primary" onClick="moveForm();">수정</button>
     </div>
 </div>
-<script>
-    let idx = null;
-    $(document).ready(function(){
-        idx = $('#idx').val();
-        if(idx == null) location.replace("/");
-
-        $('#idx').remove();
-        let param = {
-            idx: idx
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/view/select.do",
-            data: param,
-            success: function(res) {
-                $('#notice_title').html(res.title);
-                $('#notice_content').html(res.content);
-            },
-            error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
-                alert("통신 실패");
-            }
-        });
-    });
-</script>
 </body>
 </html>
