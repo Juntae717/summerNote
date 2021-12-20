@@ -2,18 +2,20 @@ package com.notice.summernote.Notice.Controller;
 
 import com.google.gson.JsonObject;
 import com.notice.summernote.Notice.Service.NoticeService;
+import com.notice.summernote.database.mybatis.dto.FileDTO;
 import com.notice.summernote.database.mybatis.dto.NoticeDTO;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -52,7 +54,7 @@ public class NoticeController {
      * @return
      */
     @RequestMapping("/summernoteImage")
-    public String displayImage(HttpServletResponse response, @RequestParam("filename") String filename) { return noticeService.displayImage(response, filename); };
+    public String displayImage(HttpServletResponse response, @RequestParam(value = "filename") String filename) { return noticeService.displayImage(response, filename); };
 
     /**
      * FUNCTION :: "/form/insert.do" URL로 클라이언트에서 POST 형식으로 접근시 NoticeService Method NoticeInsert 호출
@@ -61,7 +63,7 @@ public class NoticeController {
      */
     @PostMapping("/form/insert.do")
     @ResponseBody
-    public String NoticeInsert(NoticeDTO noticeDTO) { return noticeService.NoticeInsert(noticeDTO); }
+    public String NoticeInsert(@RequestParam(value = "article_file", required = false) List<MultipartFile> multipartFileList, NoticeDTO noticeDTO, FileDTO fileDTO) { return noticeService.NoticeInsert(multipartFileList, noticeDTO, fileDTO); }
 
     /**
      * FUNCTION :: "/form/update.do" URL로 클라이언트에서 POST 형식으로 접근시 NoticeService Method NoticeUpdate 호출
@@ -87,6 +89,10 @@ public class NoticeController {
     @PostMapping("/select.do")
     @ResponseBody
     public NoticeDTO NoticeViewSelect(NoticeDTO noticeDTO) { return noticeService.NoticeSelect(noticeDTO); }
+
+    @PostMapping("/getFile.do")
+    @ResponseBody
+    public FileDTO getFile(@RequestParam("idx") int noticeIdx) { return noticeService.getFile(noticeIdx); }
 
     /**
      * FUNCTION :: "/view/delete.do" URL로 클라이언트에서 POST 형식으로 접근시 NoticeService Method NoticeDelete 호출

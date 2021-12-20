@@ -11,6 +11,22 @@
         INSERT INTO notice(title, content) VALUES(#{title}, #{content});
     </insert>
 
+    <!-- FUNCTION :: 파일 정보 등록 -->
+    <insert id="uploadFile" parameterType="FileDTO">
+        INSERT INTO file(path, notice_idx,
+                         name1, uuid1, size1, ext1,
+                         name2, uuid2, size2, ext2,
+                         name3, uuid3, size3, ext3,
+                         name4, uuid4, size4, ext4,
+                         name5, uuid5, size5, ext5)
+        VALUES(#{path}, (select idx from notice order by idx desc LIMIT 1),
+               #{name1}, #{uuid1}, #{size1}, #{ext1},
+               #{name2}, #{uuid2}, #{size2}, #{ext2},
+               #{name3}, #{uuid3}, #{size3}, #{ext3},
+               #{name4}, #{uuid4}, #{size4}, #{ext4},
+               #{name5}, #{uuid5}, #{size5}, #{ext5});
+    </insert>
+
     <!-- FUNCTION :: 게시글 수정 -->
     <update id="updateNotice" parameterType="NoticeDTO">
         UPDATE notice SET title = #{title}, content = #{content} WHERE idx = #{idx};
@@ -21,8 +37,16 @@
         SELECT * FROM notice WHERE idx = #{idx};
     </select>
 
+    <select id="selectFile" parameterType="FileDTO" resultType="FileDTO">
+        SELECT * FROM file WHERE notice_idx = #{notice_idx};
+    </select>
+
     <!-- FUNCTION :: 게시글 삭제 -->
     <delete id="deleteNotice" parameterType="NoticeDTO">
         DELETE FROM notice WHERE idx = #{idx};
+    </delete>
+
+    <delete id="deleteFile" parameterType="FileDTO">
+        DELETE FROM file WHERE notice_idx = #{notice_idx};
     </delete>
 </mapper>

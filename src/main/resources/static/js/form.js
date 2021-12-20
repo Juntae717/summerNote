@@ -81,16 +81,133 @@ $(document).ready(function(){
 });
 
 /**
+ * FUNCTION :: 파일 탐색
+ */
+const openFileExplorer = function() {
+    $('#notice_file').click();
+};
+
+let fileCnt = 0; // 현재 필드 파일 개수
+let maxFileCnt = 5; // 필드 최대 파일 개수
+let fileNum = 0; // 파일 식별 번호
+let filesArr = new Array(); // 첨부파일 배열
+
+/**
+ * FUNCTION :: 파일 선택 시 파일 개수 확인 및 목록 추가
+ * @param element
+ */
+const fileCheck = function(element) {
+    let files = element.files;
+    let tempArr = Array.from(files);
+
+    if(fileCnt + tempArr.length > maxFileCnt) {
+        alert("파일은 최대 " + maxFileCnt + "개까지 업로드 할 수 있습니다.");
+        $('#notice_file').val("");
+        return;
+    } else {
+        fileCnt = fileCnt + tempArr.length;
+    }
+
+    tempArr.forEach(file => {
+        if(!(file.size > (10 * 1024 * 1024))) {
+            let reader = new FileReader();
+
+            let fmt_size = "";
+            if (file.size > (1024 * 1024)) {
+                fmt_size = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+            } else if (file.size > (1024)) {
+                fmt_size = (file.size / 1024).toFixed(2) + 'KB';
+            } else {
+                fmt_size = (file.size).toFixed(2) + 'B';
+            }
+
+            reader.onload = function() {
+                filesArr.push(file);
+                $('#upload-file-list').append('<div id="file_' + fileNum + '" class="file-list-item">'
+                    +file.name+ '<span style="padding: 0 5px; color: #aaa;">'+fmt_size+'</span><span id="del-btn" onclick="fileDelete('+ fileNum +')">─</span></div>');
+                fileNum++;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            fileCnt--;
+            alert(file.name + " 파일 용량이 10MB를 초과하였습니다.");
+        }
+    });
+    $('#notice_file').val("");
+};
+
+/**
+ * FUNCTION :: 파일 삭제
+ * @param fileNum
+ */
+const fileDelete = function(fileNum) {
+    filesArr[fileNum].is_delete = true;
+    $('#file_' + fileNum).remove();
+    fileCnt--;
+};
+
+/**
  * FUNCTION :: 게시글 등록
  * @returns {boolean}
  */
-const insertNotice = function() {
-    let param = {
-        title: $('#notice_title').val(),
-        content: $('.note-editable').html()
-    };
+// const insertNotice = function() {
+//     let param = {
+//         title: $('#notice_title').val(),
+//         content: $('.note-editable').html()
+//     };
+//     if(param.title == "") {
+//         alert("제목이 입력되지 않았습니다.");
+//         $('#notice_title').focus();
+//         return false;
+//     }
+//
+//     $.ajax({
+//         type: "POST",
+//         enctype: "multipart/form-data",
+//         url: "/form/insert.do",
+//         data: param,
+//         success: function(res) {
+//             let formData = new FormData();
+//             for(let i = 0; i < filesArr.length; i++) {
+//                 if(!filesArr[i].is_delete) {
+//                     formData.append("article_file", filesArr[i]);
+//                 }
+//             }
+//
+//             $.ajax({
+//                 type: "POST",
+//                 enctype: "multipart/form-data",
+//                 url: "/form/uploadFile.do",
+//                 data: formData,
+//                 processData: false,
+//                 contentType: false,
+//                 success: function (res) {
+//                     location.replace("/");
+//                 },
+//                 error: function (XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+//                     alert("통신 실패");
+//                 }
+//             });
+//         },
+//         error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+//             alert("통신 실패");
+//         }
+//     });
+// };
 
-    if(param.title == "") {
+const insertNotice = function() {
+    let formData = new FormData();
+
+    for(let i = 0; i < filesArr.length; i++) {
+        if(!filesArr[i].is_delete) {
+            formData.append("article_file", filesArr[i]);
+        }
+    }
+
+    formData.append("title", $('#notice_title').val());
+    formData.append("content", $('.note-editable').html());
+
+    if(formData.title == "") {
         alert("제목이 입력되지 않았습니다.");
         $('#notice_title').focus();
         return false;
@@ -98,12 +215,15 @@ const insertNotice = function() {
 
     $.ajax({
         type: "POST",
+        enctype: "multipart/form-data",
         url: "/form/insert.do",
-        data: param,
-        success: function(res) {
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
             location.replace("/");
-        },
-        error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+            },
+        error: function (XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
             alert("통신 실패");
         }
     });

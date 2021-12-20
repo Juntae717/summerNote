@@ -45,12 +45,22 @@
     <input id="idx" type="hidden" value="${param.idx}">
     <!-- form title 영역 -->
     <div class="form-group">
-        <label for="notice_title">제목</label>
+        <span style="display: inline-block; padding: 5px 0;">제목</span>
         <input type="title" class="form-control" id="notice_title" placeholder="Enter title">
+    </div>
+    <!-- form file 영역 -->
+    <div class="form-group">
+        <span style="display: inline-block; padding: 5px 0;">첨부파일</span><br>
+        <input type="button" value="파일 추가" onclick="openFileExplorer()"/>
+        <span style="display: inline-block; padding: 0 5px;">※첨부파일은 최대 5개까지 등록이 가능합니다.</span>
+        <input style="display: none;" multiple="multiple" type="file" accept="image/*" id="notice_file" onchange="fileCheck(this)"/>
+        <div id="upload-file-list">
+
+        </div>
     </div>
     <!-- form content 영역 -->
     <div>
-        <label for="notice_content">내용</label>
+        <span style="display: inline-block; padding: 5px 0;">내용</span>
         <textarea id="notice_content" class="summernote"></textarea>
     </div>
     <!-- form button 영역 -->

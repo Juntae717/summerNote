@@ -14,3 +14,20 @@
 #form-btn-area {
     margin-top: 5px;
 }
+
+.file-list-item {
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    margin: 5px 0;
+    padding: 0 5px;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+
+#del-btn {
+    display: inline-block;
+    float: right;
+    padding: 0 5px;
+    cursor: pointer;
+}

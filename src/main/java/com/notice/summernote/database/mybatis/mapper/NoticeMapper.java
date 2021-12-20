@@ -1,8 +1,10 @@
 package com.notice.summernote.database.mybatis.mapper;
 
+import com.notice.summernote.database.mybatis.dto.FileDTO;
 import com.notice.summernote.database.mybatis.dto.NoticeDTO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.io.File;
 import java.util.List;
 
 @Mapper
@@ -12,6 +14,8 @@ public interface NoticeMapper {
      * @param noticeDTO
      */
     void insertNotice(NoticeDTO noticeDTO);
+
+    void uploadFile(FileDTO fileDTO);
 
     /**
      * FUNCTION :: 게시글 수정 기능
@@ -33,9 +37,13 @@ public interface NoticeMapper {
      */
     NoticeDTO selectNotice(NoticeDTO noticeDTO);
 
+    FileDTO selectFile(FileDTO fileDTO);
+
     /**
      * FUNCTION :: 게시글 삭제 기능
      * @param noticeDTO
      */
     void deleteNotice(NoticeDTO noticeDTO);
+
+    void deleteFile(FileDTO fileDTO);
 }
