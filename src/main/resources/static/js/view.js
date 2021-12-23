@@ -25,26 +25,12 @@ $(document).ready(function(){
                     $('#notice_title').html(notice_info.title);
                     $('#notice_content').html(notice_info.content);
 
-                    if(!(typeof res.name1 != "undefined" && res.name1 != null && res.name1 != "")) return;
-                    $("#file-list").css("display", "block");
-                    $("#file-list").append('<div class="file-list-item">'+ res.name1+
-                        '<span style="padding: 0 5px; color: #aaa;">'+ formatFileSize(res.size1) +'</span></div>');
-
-                    if(!(typeof res.name2 != "undefined" && res.name2 != null && res.name2 != "")) return;
-                    $("#file-list").append('<div class="file-list-item">'+ res.name2+
-                        '<span style="padding: 0 5px; color: #aaa;">'+ formatFileSize(res.size2) +'</span></div>');
-
-                    if(!(typeof res.name3 != "undefined" && res.name3 != null && res.name3 != "")) return;
-                    $("#file-list").append('<div class="file-list-item">'+ res.name3+
-                        '<span style="padding: 0 5px; color: #aaa;">'+ formatFileSize(res.size3) +'</span></div>');
-
-                    if(!(typeof res.name4 != "undefined" && res.name4 != null && res.name4 != "")) return;
-                    $("#file-list").append('<div class="file-list-item">'+ res.name4+
-                        '<span style="padding: 0 5px; color: #aaa;">'+ formatFileSize(res.size4) +'</span></div>');
-
-                    if(!(typeof res.name5 != "undefined" && res.name5 != null && res.name5 != "")) return;
-                    $("#file-list").append('<div class="file-list-item">'+ res.name5+
-                        '<span style="padding: 0 5px; color: #aaa;">'+ formatFileSize(res.size5) +'</span></div>');
+                    res.forEach(item => {
+                        if(typeof item.name == "undefined") return;
+                        $("#file-list").css("display", "block");
+                        $("#file-list-area").append('<li class="file-list-item">'+ item.name+
+                            '<span style="padding: 0 5px; color: #aaa;">'+ formatFileSize(item.size) +'</span></li>');
+                    });
                 },
                 error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
                     alert("통신 실패");

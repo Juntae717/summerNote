@@ -1,3 +1,13 @@
+/* settings */
+*{
+    margin: 0;
+    padding: 0;
+}
+
+ul, li{
+    list-style: none;
+}
+
 /* header area settings */
 .header-container {
     width: 1200px;
@@ -17,12 +27,14 @@
 
 .file-list-item {
     width: 100%;
-    height: 35px;
-    line-height: 35px;
+    height: 50px;
+    line-height: 50px;
     margin: 5px 0;
     padding: 0 5px;
     border: 1px solid black;
     box-sizing: border-box;
+    cursor: grab;
+    transition: all 300ms;
 }
 
 #del-btn {

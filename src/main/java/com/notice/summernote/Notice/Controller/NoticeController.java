@@ -63,7 +63,8 @@ public class NoticeController {
      */
     @PostMapping("/form/insert.do")
     @ResponseBody
-    public String NoticeInsert(@RequestParam(value = "article_file", required = false) List<MultipartFile> multipartFileList, NoticeDTO noticeDTO, FileDTO fileDTO) { return noticeService.NoticeInsert(multipartFileList, noticeDTO, fileDTO); }
+    public String NoticeInsert(@RequestParam(value = "article_file", required = false) List<MultipartFile> multipartFileList,
+            @RequestParam(value = "maxFileCnt") String maxFileCnt, NoticeDTO noticeDTO, FileDTO fileDTO) { return noticeService.NoticeInsert(multipartFileList, maxFileCnt, noticeDTO, fileDTO); }
 
     /**
      * FUNCTION :: "/form/update.do" URL로 클라이언트에서 POST 형식으로 접근시 NoticeService Method NoticeUpdate 호출
@@ -72,7 +73,10 @@ public class NoticeController {
      */
     @PostMapping("/form/update.do")
     @ResponseBody
-    public String NoticeUpdate(NoticeDTO noticeDTO) { return noticeService.NoticeUpdate(noticeDTO); }
+    public String NoticeUpdate(@RequestParam(value = "article_file", required = false) List<MultipartFile> multipartFileList,
+                               @RequestParam(value = "nameList", required = false) List<String> nameList, @RequestParam(value = "uuidList", required = false) List<String> uuidList,
+                               @RequestParam(value = "sizeList", required = false) List<String> sizeList, @RequestParam(value = "extList", required = false) List<String> extList,
+                               @RequestParam(value = "orderList", required = false) List<String> orderList, NoticeDTO noticeDTO, FileDTO fileDTO) { return noticeService.NoticeUpdate(multipartFileList, nameList, uuidList, sizeList, extList, orderList, noticeDTO, fileDTO); }
 
     /**
      * FUNCTION :: "/view" URL로 클라이언트에서 접근시 NoticeService Method NoticeView 호출
@@ -92,7 +96,7 @@ public class NoticeController {
 
     @PostMapping("/getFile.do")
     @ResponseBody
-    public FileDTO getFile(@RequestParam("idx") int noticeIdx) { return noticeService.getFile(noticeIdx); }
+    public List<FileDTO> getFile(@RequestParam("idx") int noticeIdx, FileDTO fileDTO) { return noticeService.getFile(noticeIdx, fileDTO); }
 
     /**
      * FUNCTION :: "/view/delete.do" URL로 클라이언트에서 POST 형식으로 접근시 NoticeService Method NoticeDelete 호출
@@ -101,5 +105,5 @@ public class NoticeController {
      */
     @PostMapping("/view/delete.do")
     @ResponseBody
-    public String NoticeDelete(NoticeDTO noticeDTO) { return noticeService.NoticeDelete(noticeDTO); }
+    public String NoticeDelete(NoticeDTO noticeDTO, FileDTO fileDTO) { return noticeService.NoticeDelete(noticeDTO, fileDTO); }
 }

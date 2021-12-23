@@ -7,36 +7,15 @@ import lombok.Setter;
 @Setter
 public class FileDTO {
     int idx; // 고유식별자
+
+    String ref_name; // 첨부파일을 올릴 참조할 테이블 명칭
+    int ref_idx; // 첨부파일을 올릴 컬럼 식별자
     
-    // 기존 파일명
-    String name1;
-    String name2;
-    String name3;
-    String name4;
-    String name5;
+    int file_order; // 파일 정렬 순서
     
     String path; // 파일 저장 경로
-    
-    int notice_idx; // 첨부파일을 올릴 게시판 식별자
-    
-    // 저장될 파일명
-    String uuid1;
-    String uuid2;
-    String uuid3;
-    String uuid4;
-    String uuid5;
-    
-    // 파일 크기
-    int size1;
-    int size2;
-    int size3;
-    int size4;
-    int size5;
-    
-    // 파일 확장명
-    String ext1;
-    String ext2;
-    String ext3;
-    String ext4;
-    String ext5;
+    String name; // 기존 파일명
+    String uuid; // 저장될 파일명
+    int size; // 파일 크기
+    String ext; // 파일 확장명
 }

@@ -19,16 +19,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
     private final NoticeMapper noticeMapper;
+    private final String noticeFileRoot = "C:\\summernote_file\\"; // 이미지 파일 저장할 경로
 
     /**
      * FUNCTION :: 게시글 전체 목록 불러오고 notice.jsp 반환
@@ -115,74 +114,59 @@ public class NoticeService {
      * @return
      */
     @Transactional
-    public String NoticeInsert(List<MultipartFile> multipartFileList, NoticeDTO noticeDTO, FileDTO fileDTO) {
+    public String NoticeInsert(List<MultipartFile> multipartFileList, String maxFileCnt, NoticeDTO noticeDTO, FileDTO fileDTO) {
         noticeMapper.insertNotice(noticeDTO);
-        uploadFile(multipartFileList, fileDTO);
-        return "success";
+        return uploadFile(multipartFileList, maxFileCnt, fileDTO);
     }
 
-    public String uploadFile(List<MultipartFile> multipartFileList, FileDTO fileDTO) {
+    public String uploadFile(List<MultipartFile> multipartFileList, String maxFileCnt, FileDTO fileDTO) {
         try {
-            if(multipartFileList.size() > 0 && !multipartFileList.get(0).getOriginalFilename().equals("")) {
-                int fileIndex = 1;
-                String fileRoot = "D:\\summernote_file\\"; // 이미지 파일 저장할 경로
-                fileDTO.setPath(fileRoot);
+            int fileOrder = 1;
+            if(multipartFileList != null) {
+                fileDTO.setPath(noticeFileRoot);
                 for(MultipartFile file: multipartFileList) {
                     String originalFileName = file.getOriginalFilename(); // 파일의 원래 이름
                     String extension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 파일의 확장자
 
+                    // LINE : 저장될 파일 이름 랜덤 생성
                     String uuid = UUID.randomUUID().toString();
-                    String savedFileName = uuid + extension; // 저장할 파일 이름 랜덤 생성
+                    String savedFileName = uuid + extension;
 
-                    File targetFile = new File(fileRoot + savedFileName); // 파일 객체 생성
+                    File targetFile = new File(noticeFileRoot + savedFileName); // 파일 객체 생성
                     try{
                         InputStream fileStream = file.getInputStream(); // 파일을 읽을 객체 생성
                         FileUtils.copyInputStreamToFile(fileStream, targetFile); // 파일 저장
-                        switch (fileIndex) {
-                            case 1:
-                                fileDTO.setName1(originalFileName);
-                                fileDTO.setUuid1(uuid);
-                                fileDTO.setSize1((int) file.getSize());
-                                fileDTO.setExt1(extension);
-                                break;
-                            case 2:
-                                fileDTO.setName2(originalFileName);
-                                fileDTO.setUuid2(uuid);
-                                fileDTO.setSize2((int) file.getSize());
-                                fileDTO.setExt2(extension);
-                                break;
-                            case 3:
-                                fileDTO.setName3(originalFileName);
-                                fileDTO.setUuid3(uuid);
-                                fileDTO.setSize3((int) file.getSize());
-                                fileDTO.setExt3(extension);
-                                break;
-                            case 4:
-                                fileDTO.setName4(originalFileName);
-                                fileDTO.setUuid4(uuid);
-                                fileDTO.setSize4((int) file.getSize());
-                                fileDTO.setExt4(extension);
-                                break;
-                            case 5:
-                                fileDTO.setName5(originalFileName);
-                                fileDTO.setUuid5(uuid);
-                                fileDTO.setSize5((int) file.getSize());
-                                fileDTO.setExt5(extension);
-                                break;
-                            default: break;
-                        }
-                        fileIndex++;
+
+                        fileDTO.setRef_name("notice");
+                        fileDTO.setFile_order(fileOrder);
+                        fileDTO.setName(originalFileName);
+                        fileDTO.setUuid(uuid);
+                        fileDTO.setSize((int) file.getSize());
+                        fileDTO.setExt(extension);
+
+                        noticeMapper.insertFile(fileDTO);
+                        fileOrder++;
                     } catch (IOException e) {
                         FileUtils.deleteQuietly(targetFile); // 파일 제거
                         e.printStackTrace();
                     }
                 }
             }
+            for (int i = fileOrder; i <= Integer.parseInt(maxFileCnt); i++) {
+                fileDTO.setRef_name("notice");
+                fileDTO.setFile_order(fileOrder);
+                fileDTO.setName(null);
+                fileDTO.setUuid(null);
+                fileDTO.setSize(0);
+                fileDTO.setExt(null);
+
+                noticeMapper.insertFile(fileDTO);
+                fileOrder++;
+            }
+            return "success";
         } catch(Exception e) {
             e.printStackTrace();
-        } finally {
-            noticeMapper.uploadFile(fileDTO);
-            return "success";
+            return "error";
         }
     }
 
@@ -191,10 +175,62 @@ public class NoticeService {
      * @param noticeDTO
      * @return
      */
-    public String NoticeUpdate(NoticeDTO noticeDTO) {
+    @Transactional
+    public String NoticeUpdate(List<MultipartFile> multipartFileList, List<String> nameList, List<String> uuidList, List<String> sizeList, List<String> extList, List<String> orderList, NoticeDTO noticeDTO, FileDTO fileDTO) {
+        updateFile(multipartFileList, nameList, uuidList, sizeList, extList, orderList, noticeDTO, fileDTO);
         noticeMapper.updateNotice(noticeDTO);
-
         return "success";
+    }
+
+    public void updateFile(List<MultipartFile> multipartFileList, List<String> nameList, List<String> uuidList, List<String> sizeList, List<String> extList, List<String> orderList, NoticeDTO noticeDTO, FileDTO fileDTO) {
+        try {
+            int fileIndex = 0;
+            fileDTO.setRef_idx(noticeDTO.getIdx());
+            fileDTO.setRef_name("notice");
+            noticeMapper.resetFile(fileDTO);
+            if(multipartFileList != null) {
+                for(MultipartFile file: multipartFileList) {
+                    String originalFileName = file.getOriginalFilename(); // 파일의 원래 이름
+                    String extension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 파일의 확장자
+
+                    // LINE : 저장될 파일 이름 랜덤 생성
+                    String uuid = UUID.randomUUID().toString();
+                    String savedFileName = uuid + extension;
+
+                    File targetFile = new File(noticeFileRoot + savedFileName); // 파일 객체 생성
+                    try{
+                        InputStream fileStream = file.getInputStream(); // 파일을 읽을 객체 생성
+                        FileUtils.copyInputStreamToFile(fileStream, targetFile); // 파일 저장
+
+                        fileDTO.setFile_order(Integer.parseInt(orderList.get(fileIndex)));
+                        fileDTO.setName(originalFileName);
+                        fileDTO.setUuid(uuid);
+                        fileDTO.setSize((int) file.getSize());
+                        fileDTO.setExt(extension);
+
+                        noticeMapper.updateFile(fileDTO);
+                        fileIndex++;
+                    } catch (IOException e) {
+                        FileUtils.deleteQuietly(targetFile); // 파일 제거
+                        e.printStackTrace();
+                    }
+                }
+            }
+            int originalFileIndex = 0;
+            while(fileIndex < orderList.size()) {
+                fileDTO.setFile_order(Integer.parseInt(orderList.get(fileIndex)));
+                fileDTO.setName(nameList.get(originalFileIndex));
+                fileDTO.setUuid(uuidList.get(originalFileIndex));
+                fileDTO.setSize(Integer.parseInt(sizeList.get(originalFileIndex)));
+                fileDTO.setExt(extList.get(originalFileIndex));
+
+                noticeMapper.updateFile(fileDTO);
+                originalFileIndex++;
+                fileIndex++;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -212,9 +248,9 @@ public class NoticeService {
         return noticeMapper.selectNotice(noticeDTO);
     }
 
-    public FileDTO getFile(int noticeIdx) {
-        FileDTO fileDTO = new FileDTO();
-        fileDTO.setNotice_idx(noticeIdx);
+    public List<FileDTO> getFile(int noticeIdx, FileDTO fileDTO) {
+        fileDTO.setRef_name("notice");
+        fileDTO.setRef_idx(noticeIdx);
         return noticeMapper.selectFile(fileDTO);
     }
 
@@ -224,13 +260,12 @@ public class NoticeService {
      * @return
      */
     @Transactional
-    public String NoticeDelete(NoticeDTO noticeDTO) {
-        FileDTO fileDTO = new FileDTO();
-        fileDTO.setNotice_idx(noticeDTO.getIdx());
+    public String NoticeDelete(NoticeDTO noticeDTO, FileDTO fileDTO) {
+        fileDTO.setRef_name("notice");
+        fileDTO.setRef_idx(noticeDTO.getIdx());
         noticeMapper.deleteFile(fileDTO);
 
         noticeMapper.deleteNotice(noticeDTO);
-
         return "success";
     }
 }

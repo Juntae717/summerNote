@@ -46,7 +46,9 @@
             <span id="notice_title"></span>
         </li>
         <li style="display: none;" id="file-list" class="list-group-item">
+            <ul id="file-list-area">
 
+            </ul>
         </li>
         <li class="list-group-item">
             <div id="notice_content">

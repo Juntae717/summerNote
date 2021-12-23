@@ -15,13 +15,16 @@ public interface NoticeMapper {
      */
     void insertNotice(NoticeDTO noticeDTO);
 
-    void uploadFile(FileDTO fileDTO);
+    void insertFile(FileDTO fileDTO);
 
     /**
      * FUNCTION :: 게시글 수정 기능
      * @param noticeDTO
      */
     void updateNotice(NoticeDTO noticeDTO);
+
+    void resetFile(FileDTO fileDTO);
+    void updateFile(FileDTO fileDTO);
 
     /**
      * FUNTION :: 게시글 전체 목록 불러오기 기능
@@ -37,7 +40,7 @@ public interface NoticeMapper {
      */
     NoticeDTO selectNotice(NoticeDTO noticeDTO);
 
-    FileDTO selectFile(FileDTO fileDTO);
+    List<FileDTO> selectFile(FileDTO fileDTO);
 
     /**
      * FUNCTION :: 게시글 삭제 기능

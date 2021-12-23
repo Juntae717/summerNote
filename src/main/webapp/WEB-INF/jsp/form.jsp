@@ -53,10 +53,10 @@
         <span style="display: inline-block; padding: 5px 0;">첨부파일</span><br>
         <input type="button" value="파일 추가" onclick="openFileExplorer()"/>
         <span style="display: inline-block; padding: 0 5px;">※첨부파일은 최대 5개까지 등록이 가능합니다.</span>
-        <input style="display: none;" multiple="multiple" type="file" accept="image/*" id="notice_file" onchange="fileCheck(this)"/>
-        <div id="upload-file-list">
+        <input style="display: none;" id="notice_file" type="file" accept="image/*" multiple="multiple" onchange="fileCheck(this)"/>
+        <ul style="overflow: hidden" id="upload-file-list">
 
-        </div>
+        </ul>
     </div>
     <!-- form content 영역 -->
     <div>

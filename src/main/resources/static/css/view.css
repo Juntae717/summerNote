@@ -1,3 +1,13 @@
+/* settings */
+*{
+    margin: 0;
+    padding: 0;
+}
+
+ul, li{
+    list-style: none;
+}
+
 /* header area settings */
 .header-container {
     width: 1200px;

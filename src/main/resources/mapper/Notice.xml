@@ -12,24 +12,22 @@
     </insert>
 
     <!-- FUNCTION :: 파일 정보 등록 -->
-    <insert id="uploadFile" parameterType="FileDTO">
-        INSERT INTO file(path, notice_idx,
-                         name1, uuid1, size1, ext1,
-                         name2, uuid2, size2, ext2,
-                         name3, uuid3, size3, ext3,
-                         name4, uuid4, size4, ext4,
-                         name5, uuid5, size5, ext5)
-        VALUES(#{path}, (select idx from notice order by idx desc LIMIT 1),
-               #{name1}, #{uuid1}, #{size1}, #{ext1},
-               #{name2}, #{uuid2}, #{size2}, #{ext2},
-               #{name3}, #{uuid3}, #{size3}, #{ext3},
-               #{name4}, #{uuid4}, #{size4}, #{ext4},
-               #{name5}, #{uuid5}, #{size5}, #{ext5});
+    <insert id="insertFile" parameterType="FileDTO">
+        INSERT INTO tfile(ref_name, ref_idx, file_order, path, name, uuid, size, ext)
+        VALUES(#{ref_name}, (SELECT idx FROM ${ref_name} ORDER BY idx DESC LIMIT 1), #{file_order}, #{path}, #{name}, #{uuid}, #{size}, #{ext});
     </insert>
 
     <!-- FUNCTION :: 게시글 수정 -->
     <update id="updateNotice" parameterType="NoticeDTO">
         UPDATE notice SET title = #{title}, content = #{content} WHERE idx = #{idx};
+    </update>
+
+    <update id="resetFile" parameterType="FileDTO">
+        UPDATE tfile SET name = null, uuid = null, size = 0, ext = null WHERE ref_idx = #{ref_idx} AND ref_name = #{ref_name};
+    </update>
+
+    <update id="updateFile" parameterType="FileDTO">
+        UPDATE tfile SET name = #{name}, uuid = #{uuid}, size = #{size}, ext = #{ext} WHERE ref_idx = #{ref_idx} AND ref_name = #{ref_name} AND file_order = #{file_order};
     </update>
 
     <!-- FUNCTION :: 게시글 상세 조회 -->
@@ -38,7 +36,7 @@
     </select>
 
     <select id="selectFile" parameterType="FileDTO" resultType="FileDTO">
-        SELECT * FROM file WHERE notice_idx = #{notice_idx};
+        SELECT * FROM tfile WHERE ref_name = #{ref_name} AND ref_idx = #{ref_idx} ORDER BY file_order ASC;
     </select>
 
     <!-- FUNCTION :: 게시글 삭제 -->
@@ -47,6 +45,6 @@
     </delete>
 
     <delete id="deleteFile" parameterType="FileDTO">
-        DELETE FROM file WHERE notice_idx = #{notice_idx};
+        DELETE FROM tfile WHERE ref_name = #{ref_name} AND ref_idx = #{ref_idx};
     </delete>
 </mapper>
